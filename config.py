@@ -30,29 +30,26 @@ class Config:
     JWT_SECRET_KEY = os.getenv(
         "JWT_SECRET_KEY",
         "change-this-jwt-secret-key"
+
+        
+# PostgreSQL
+# ------------------------------
+
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    ""
+)
+
+if DATABASE_URL.startswith("postgresql://"):
+    DATABASE_URL = DATABASE_URL.replace(
+        "postgresql://",
+        "postgresql+psycopg://",
+        1
     )
 
+SQLALCHEMY_DATABASE_URI = DATABASE_URL
 
-    # ------------------------------
-    # PostgreSQL
-    # ------------------------------
-
-    DATABASE_URL = os.getenv(
-        "DATABASE_URL",
-        ""
-    )
-
-    SQLALCHEMY_DATABASE_URI = (
-        DATABASE_URL
-        if DATABASE_URL
-        else "postgresql+psycopg://"
-        "postgres:postgres@"
-        "localhost:5432/"
-        "manga_gallery"
-    )
-
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-
+SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # ------------------------------
     # Application

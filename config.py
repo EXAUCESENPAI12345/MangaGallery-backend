@@ -23,7 +23,7 @@ load_dotenv(
 class Config:
 
     # ------------------------------
-    # Security
+    # Sécurité
     # ------------------------------
 
     SECRET_KEY = os.getenv(
@@ -35,7 +35,6 @@ class Config:
         "JWT_SECRET_KEY",
         "change-this-jwt-secret-key"
     )
-
 
     # ------------------------------
     # PostgreSQL
@@ -56,7 +55,6 @@ class Config:
     SQLALCHEMY_DATABASE_URI = DATABASE_URL
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
 
     # ------------------------------
     # Application
@@ -84,10 +82,64 @@ class Config:
     PORT = int(
         os.getenv(
             "PORT",
-            "10000"
+            "5000"
         )
     )
 
+    APP_VERSION = os.getenv(
+        "APP_VERSION",
+        "1.0.0"
+    )
+
+    AUTO_CREATE_TABLES = (
+        os.getenv(
+            "AUTO_CREATE_TABLES",
+            "false"
+        ).lower()
+        in {"1", "true", "yes"}
+    )
+
+    # ------------------------------
+    # API
+    # ------------------------------
+
+    API_PREFIX = os.getenv(
+        "API_PREFIX",
+        "/api"
+    )
+
+    # ------------------------------
+    # Upload / médias
+    # ------------------------------
+
+    MAX_CONTENT_LENGTH = (
+        50 * 1024 * 1024
+    )
+
+    ALLOWED_IMAGE_EXTENSIONS = {
+        "jpg",
+        "jpeg",
+        "png",
+        "webp"
+    }
+
+    # ------------------------------
+    # Pagination
+    # ------------------------------
+
+    DEFAULT_PAGE_SIZE = int(
+        os.getenv(
+            "DEFAULT_PAGE_SIZE",
+            "20"
+        )
+    )
+
+    MAX_PAGE_SIZE = int(
+        os.getenv(
+            "MAX_PAGE_SIZE",
+            "100"
+        )
+    )
 
     # ------------------------------
     # CORS
@@ -98,27 +150,6 @@ class Config:
         "*"
     )
 
-    if CORS_ORIGINS != "*":
-        CORS_ORIGINS = [
-            origin.strip()
-            for origin in CORS_ORIGINS.split(",")
-            if origin.strip()
-        ]
-
-
-    # ------------------------------
-    # Database
-    # ------------------------------
-
-    AUTO_CREATE_TABLES = (
-        os.getenv(
-            "AUTO_CREATE_TABLES",
-            "false"
-        ).lower()
-        == "true"
-    )
-
-
     # ------------------------------
     # Telegram
     # ------------------------------
@@ -128,29 +159,24 @@ class Config:
         ""
     )
 
+    TELEGRAM_BOT_USERNAME = os.getenv(
+        "TELEGRAM_BOT_USERNAME",
+        ""
+    )
+
+    TELEGRAM_MINI_APP_URL = os.getenv(
+        "TELEGRAM_MINI_APP_URL",
+        ""
+    )
+
     TELEGRAM_WEBHOOK_SECRET = os.getenv(
         "TELEGRAM_WEBHOOK_SECRET",
         ""
     )
 
-
-    # ------------------------------
-    # Public URL
-    # ------------------------------
-
     PUBLIC_BACKEND_URL = os.getenv(
         "PUBLIC_BACKEND_URL",
         ""
-    )
-
-
-    # ------------------------------
-    # Version
-    # ------------------------------
-
-    APP_VERSION = os.getenv(
-        "APP_VERSION",
-        "1.0.0"
     )
 
 
@@ -161,6 +187,7 @@ class Config:
 def validate_config():
 
     required = {
+
         "SECRET_KEY":
             Config.SECRET_KEY,
 
@@ -172,12 +199,17 @@ def validate_config():
     }
 
     missing = [
+
         key
-        for key, value in required.items()
+
+        for key, value
+        in required.items()
+
         if not value
     ]
 
     if missing:
+
         raise RuntimeError(
             "Configuration manquante : "
             + ", ".join(missing)

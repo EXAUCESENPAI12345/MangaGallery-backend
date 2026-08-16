@@ -25,7 +25,6 @@ from models.user import User
 auth_bp = Blueprint(
     "auth",
     __name__,
-    url_prefix="/api/auth",
 )
 
 
@@ -118,9 +117,10 @@ def register():
     user = User(
         username=username,
         email=email,
-        password_hash=generate_password_hash(password),
+        password_hash=generate_password_hash(
+            password
+        ),
         role="user",
-        role_id=None,
         status="active",
         is_verified=False,
         created_at=datetime.utcnow(),
@@ -199,6 +199,7 @@ def login():
         )
 
     user.last_login = datetime.utcnow()
+
     db.session.commit()
 
     access_token = create_access_token(
@@ -206,11 +207,13 @@ def login():
         additional_claims={
             "role": user.role,
         },
-        expires_delta=timedelta(hours=1),
+        expires_delta=timedelta(
+            hours=1
+        ),
     )
 
     refresh_token = create_refresh_token(
-        identity=str(user.id),
+        identity=str(user.id)
     )
 
     return success_response(
@@ -262,7 +265,7 @@ def me():
 
 
 # ==================================
-# REFRESH TOKEN
+# REFRESH
 # ==================================
 
 @auth_bp.post("/refresh")
@@ -273,7 +276,9 @@ def refresh():
 
     access_token = create_access_token(
         identity=str(user_id),
-        expires_delta=timedelta(hours=1),
+        expires_delta=timedelta(
+            hours=1
+        ),
     )
 
     return success_response(
@@ -287,7 +292,7 @@ def refresh():
 
 
 # ==================================
-# VERIFY SESSION
+# VERIFY
 # ==================================
 
 @auth_bp.get("/verify")
@@ -469,7 +474,8 @@ def status():
 def register_auth_routes(app):
 
     app.register_blueprint(
-        auth_bp
+        auth_bp,
+        url_prefix="/api/auth",
     )
 
     return app

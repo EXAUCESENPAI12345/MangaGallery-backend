@@ -28,9 +28,9 @@ class Config:
     )
 
     JWT_SECRET_KEY = os.getenv(
-        "JWT_SECRET_KEY",
-        "change-this-jwt-secret-key"
-
+    "JWT_SECRET_KEY",
+    "change-this-jwt-secret-key"
+)
         
 # PostgreSQL
 # ------------------------------
